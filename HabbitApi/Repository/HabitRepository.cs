@@ -5,19 +5,20 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HabbitApi.Repository;
 
-public class HabitRespository : IHabitRepository
+public class HabitRepository : IHabitRepository
 {
     private readonly ApplicationDbContext _context;
     
-    public HabitRespository(ApplicationDbContext context)
+    public HabitRepository(ApplicationDbContext context)
     {
         _context = context;
     }
     
     public async Task<Habit> AddAsync(Habit habit)
     {
-        await _context.habits.AddAsync(habit);
-        return habit;
+       await _context.habits.AddAsync(habit);
+       
+         return habit;
     }
 
     public Task<Habit?> GetByIdAsync(Guid id)
@@ -32,7 +33,7 @@ public class HabitRespository : IHabitRepository
         return habits.AsReadOnly();
     }
 
-    public  Task UpdateAsync(Habit habit)
+    public Task UpdateAsync(Habit habit)
     {
         _context.habits.Update(habit);
         
