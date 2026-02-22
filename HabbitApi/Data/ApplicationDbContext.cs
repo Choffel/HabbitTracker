@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using HabbitApi.Model;
+using Microsoft.EntityFrameworkCore;
 
 namespace HabbitApi.Data;
 
@@ -9,6 +10,6 @@ public class ApplicationDbContext : DbContext
         
     }
     
-    
+    public DbSet<Habit> habits { get; set; }
     
 }

@@ -1,6 +1,6 @@
 ﻿namespace HabbitApi.Service;
 
-public class HabbitService
+public class HabitService
 {
     
 }

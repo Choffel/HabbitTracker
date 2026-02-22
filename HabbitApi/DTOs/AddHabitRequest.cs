@@ -1,6 +1,6 @@
 ﻿namespace HabbitApi.DTOs;
 
-public class AddHabbitRequest
+public class AddHabitRequest
 {
     public string Name { get; set; }
     

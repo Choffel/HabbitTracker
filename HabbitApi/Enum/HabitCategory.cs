@@ -1,6 +1,6 @@
 ﻿namespace HabbitApi.Enum;
 
-public class HabbitCategory
+public class HabitCategory
 {
     
 }
