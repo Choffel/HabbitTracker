@@ -29,8 +29,20 @@ public class CategoryRepository : ICategoryRepository
         await _context.Categories.AddAsync(category);
     }
 
-    public void Remove(Category category)
+    public async Task RemoveAsync(Guid id)
     {
+        var category = await GetByIdAsync(id);
+
+        if (category == null)
+            return;  // Optionally, throw an exception or handle the case where the category is not found.
+
         _context.Categories.Remove(category);
+    }
+
+    public async Task<Category> GetByNameAsync(string name)
+    {
+        var get =  _context.Categories.FirstOrDefaultAsync(q => q.Name == name);
+        
+        return await get;
     }
 }
