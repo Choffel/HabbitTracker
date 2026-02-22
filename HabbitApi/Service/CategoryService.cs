@@ -74,22 +74,20 @@ public class CategoryService : ICategoryService
         
         await _unitOfWork.SaveChangesAsync();
     }
-
     
-    //  return to id 
-    public async Task<Category> DeleteCategoryAsync(Guid id)
+    public async Task<CategoryDTO> DeleteCategoryAsync(Guid id)
     {
-        var category = await _categoryRepository.GetByIdAsync(id);
-        
-        if (category == null)
-        {
-            throw new Exception("Category not found");
-        }
-        
-        await  _categoryRepository.RemoveAsync(id);
+        var affected = await _categoryRepository.RemoveAsync(id);
+
+        if (affected == 0)
+            throw new KeyNotFoundException("Category not found");
 
         await _unitOfWork.SaveChangesAsync();
-
-        return category;
+        
+        return new CategoryDTO
+        {
+            Id = id,
+            Name = string.Empty //null
+        };
     }
 }

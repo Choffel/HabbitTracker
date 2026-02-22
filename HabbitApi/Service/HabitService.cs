@@ -29,7 +29,6 @@ public class HabitService : IHabitService
             throw new Exception("Category not found");
         }
         
-        
         var habit = new Habit()
         {
             Id = Guid.NewGuid(),
@@ -64,7 +63,7 @@ public class HabitService : IHabitService
         return _mapper.Map<HabitResponseDTO>(findHabit);
     }
 
-    public async Task UpdateHabbitAsync(Guid habitId, UpdateHabitRequest request)
+    public async Task UpdateHabitAsync(Guid habitId, UpdateHabitRequest request)
     {
         //get habit 
         var findHabit = await _habitRepository.GetByIdAsync(habitId);
@@ -87,7 +86,7 @@ public class HabitService : IHabitService
         await _uof.SaveChangesAsync();
     }
 
-    public Task DeleteHabbitAsync(Guid habitId)
+    public Task DeleteHabitAsync(Guid habitId)
     {
         var findHabit = _habitRepository.GetByIdAsync(habitId);
     
