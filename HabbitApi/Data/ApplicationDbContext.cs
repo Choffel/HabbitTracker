@@ -12,4 +12,6 @@ public class ApplicationDbContext : DbContext
     
     public DbSet<Habit> habits { get; set; }
     
+    public DbSet<Category> Categories { get; set; }
+    
 }
