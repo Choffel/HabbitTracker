@@ -10,5 +10,7 @@ public interface ICategoryRepository
     
     Task AddAsync(Category category);
     
-    void Remove(Category category);
+    Task RemoveAsync(Guid id );
+    
+    Task<Category> GetByNameAsync(string name);
 }
