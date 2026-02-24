@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddControllers();
 builder.Services.AddSwaggerGen();
 builder.Services.AddAutoMapper(cfg => { }, typeof(HabitMappingProfile));
 
@@ -34,5 +35,6 @@ app.UseSwaggerUI(c =>
 
 
 app.UseHttpsRedirection();
+app.MapControllers();
 
 app.Run();
