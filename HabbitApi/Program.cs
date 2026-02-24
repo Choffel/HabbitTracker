@@ -42,7 +42,8 @@ app.UseSwaggerUI(c =>
 
 
 app.UseHttpsRedirection();
-app.MapControllers();
 app.UseCors();
+app.MapControllers();
+
 
 app.Run();
