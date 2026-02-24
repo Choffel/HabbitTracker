@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace HabbitApi.Controller;
 
 [ApiController]
+[Route("api/v1/[controller]")]
 public class HabitController : ControllerBase
 {
     private readonly IHabitService _habitService;
@@ -17,20 +18,20 @@ public class HabitController : ControllerBase
     [HttpPost("Create")]
     public async Task<IActionResult> CreateHabit([FromBody] AddHabitRequestDTO request)
     {
-        await _habitService.AddHabitAsync(request);
+        var result = await _habitService.AddHabitAsync(request);
         
-        return Ok();
+        return CreatedAtAction(nameof(GetById), new {id = result.Id}, result);
     }
 
-    [HttpGet("GetById")]
-    public async Task<IActionResult> GetHabitById([FromRoute] Guid habitId)
+    [HttpGet("GetById/{id}")]
+    public async Task<IActionResult> GetById([FromRoute] Guid id)
     {
-        var find = await _habitService.GetHabitByIdAsync(habitId);
+        var find = await _habitService.GetHabitByIdAsync(id);
         
         return Ok(find);
     }
 
-    [HttpGet("GetAll")]
+    [HttpGet]
     public async Task<IActionResult> GetAllHabits()
     {
         var getAll = await _habitService.GetAllHabitsAsync();
@@ -38,18 +39,18 @@ public class HabitController : ControllerBase
         return Ok(getAll);
     }
 
-    [HttpPut("Update")]
-    public async Task<IActionResult> UpdateHabit([FromRoute] Guid habitId, [FromBody] UpdateHabitRequest request)
+    [HttpPut("Update/{id}")]
+    public async Task<IActionResult> UpdateHabit([FromRoute] Guid id, [FromBody] UpdateHabitRequest request)
     {
-        await _habitService.UpdateHabitAsync(habitId, request); // исправил название
+        await _habitService.UpdateHabitAsync(id, request); 
 
         return NoContent();
     }
     
-    [HttpDelete("Delete")]
-    public async Task<IActionResult> DeleteHabit([FromRoute] Guid habitId)
+    [HttpDelete("Delete/{id}")]
+    public async Task<IActionResult> DeleteHabit([FromRoute] Guid id)
     {
-        await _habitService.DeleteHabitAsync(habitId);
+        await _habitService.DeleteHabitAsync(id);
         
         return NoContent();
     }
