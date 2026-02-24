@@ -16,7 +16,7 @@ public class CategoryRepository : ICategoryRepository
 
     public async Task<Category> GetByIdAsync(Guid id)
     {
-        return await _context.Categories.FindAsync(id);
+        return await _context.Categories.FirstOrDefaultAsync(q => q.Id == id);
     }
 
     public async Task<IEnumerable<Category>> GetAllAsync()
@@ -29,20 +29,15 @@ public class CategoryRepository : ICategoryRepository
         await _context.Categories.AddAsync(category);
     }
 
-    public async Task RemoveAsync(Guid id)
+    public async Task<int> RemoveAsync(Guid id)
     {
-        var category = await GetByIdAsync(id);
+        var affected = await _context.Categories
+            .Where(c => c.Id == id)
+            .ExecuteDeleteAsync();
 
-        if (category == null)
-            return;  // Optionally, throw an exception or handle the case where the category is not found.
-
-        _context.Categories.Remove(category);
-    }
-
-    public async Task<Category> GetByNameAsync(string name)
-    {
-        var get =  _context.Categories.FirstOrDefaultAsync(q => q.Name == name);
+        if (affected == 0)
+            throw new KeyNotFoundException("Category not found");
         
-        return await get;
+        return affected;
     }
 }

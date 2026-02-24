@@ -12,5 +12,4 @@ public interface ICategoryRepository
     
     Task<int> RemoveAsync(Guid id );
     
-    Task<Category> GetByNameAsync(string name);
 }
