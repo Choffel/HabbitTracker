@@ -16,6 +16,13 @@ builder.Services.AddAutoMapper(cfg => { }, typeof(HabitMappingProfile));
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+
+builder.Services.AddCors(options => {
+    options.AddDefaultPolicy(policy => {
+        policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+    });
+});
+
 //services
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
@@ -36,5 +43,6 @@ app.UseSwaggerUI(c =>
 
 app.UseHttpsRedirection();
 app.MapControllers();
+app.UseCors();
 
 app.Run();
