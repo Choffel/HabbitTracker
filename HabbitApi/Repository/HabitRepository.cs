@@ -23,14 +23,14 @@ public class HabitRepository : IHabitRepository
 
     public Task<Habit?> GetByIdAsync(Guid id)
     {
-        return _context.habits.FirstOrDefaultAsync(h => h.Id == id);
+        return _context.habits.Include(h => h.Category).FirstOrDefaultAsync(h => h.Id == id);
     }
 
     public async Task<IReadOnlyCollection<Habit>> GetAllAsync()
     {
-        var habits = await _context.habits.ToListAsync();
-
-        return habits.AsReadOnly();
+        return await _context.habits
+            .Include(h => h.Category)
+            .ToListAsync();
     }
 
     public Task UpdateAsync(Habit habit)

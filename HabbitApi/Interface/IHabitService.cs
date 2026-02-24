@@ -5,9 +5,9 @@ namespace HabbitApi.Interface;
 
 public interface IHabitService
 {
-    Task AddHabitAsync (AddHabitRequestDTO requestDto);
+    Task<HabitResponseDTO> AddHabitAsync(AddHabitRequestDTO requestDto);
     
-    Task<IReadOnlyCollection<Habit>> GetAllHabitsAsync();
+    Task<IReadOnlyCollection<HabitResponseDTO>> GetAllHabitsAsync();
     
     Task<HabitResponseDTO> GetHabitByIdAsync(Guid habitId);
     
