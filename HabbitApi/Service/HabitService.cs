@@ -20,7 +20,7 @@ public class HabitService : IHabitService
         _habitRepository = habitRepository;
     }
     
-    public async Task AddHabitAsync(AddHabitRequestDTO requestDto)
+    public async Task<HabitResponseDTO> AddHabitAsync(AddHabitRequestDTO requestDto)
     {
         var category =  await _categoryRepository.GetByIdAsync(requestDto.CategoryId);
 
@@ -36,21 +36,24 @@ public class HabitService : IHabitService
             CategoryId = category.Id,
             Category = category,
             CreatedOn = DateTime.UtcNow,
-            LastUpdate = DateTime.UtcNow
+            LastUpdate = DateTime.UtcNow,
+            IsComplete = false  
         };
         
         await _habitRepository.AddAsync(habit);
         
         await _uof.SaveChangesAsync();
-    }
-
-    public Task<IReadOnlyCollection<Habit>> GetAllHabitsAsync()
-    {
-        var habits = _habitRepository.GetAllAsync();
         
-        return habits;
+        return  _mapper.Map<HabitResponseDTO>(habit);
     }
 
+    public async Task<IReadOnlyCollection<HabitResponseDTO>> GetAllHabitsAsync()
+    {
+        
+        var habits = await _habitRepository.GetAllAsync(); // Include(h => h.Category) уже есть
+        return habits.Select(h => _mapper.Map<HabitResponseDTO>(h)).ToList();
+    }
+    
     public async Task<HabitResponseDTO> GetHabitByIdAsync(Guid habitId)
     {
         var findHabit =  await _habitRepository.GetByIdAsync(habitId);
@@ -73,11 +76,13 @@ public class HabitService : IHabitService
             throw new Exception("Habit not found");
         }
         
-        var category =  await _categoryRepository.GetByNameAsync(request.Category);
+        var category = await _categoryRepository.GetByIdAsync(request.CategoryId);
         
         if (category == null)
             throw new Exception("Category not found");
-        
+
+
+        findHabit.Id = request.CategoryId;
         findHabit.Name = request.Name;
         findHabit.Category = category;
         findHabit.LastUpdate = DateTime.UtcNow;

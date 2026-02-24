@@ -4,5 +4,5 @@ public class UpdateHabitRequest
 {
     public string Name { get; set; }
     
-    public string Category { get; set; }
+    public Guid CategoryId { get; set; }
 }
