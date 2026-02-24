@@ -1,8 +1,8 @@
 ﻿namespace HabbitApi.DTOs;
 
-public class AddHabbitRequest
+public class UpdateHabitRequest
 {
     public string Name { get; set; }
     
-    public string Category { get; set; }
+    public Guid CategoryId { get; set; }
 }

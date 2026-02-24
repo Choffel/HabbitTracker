@@ -1,6 +1,6 @@
 ﻿namespace HabbitApi.DTOs;
 
-public class HabbitResponseDTO
+public class HabitResponseDTO
 {
     public Guid Id { get; set; }
     
