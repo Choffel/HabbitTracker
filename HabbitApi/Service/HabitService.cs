@@ -102,4 +102,22 @@ public class HabitService : IHabitService
     
         return _habitRepository.DeleteAsync(habitId);
     }
+    
+    public async Task<HabitResponseDTO> CompleteHabitAsync(Guid habitId)
+    {
+        var findHabit = await _habitRepository.GetByIdAsync(habitId);
+    
+        if (findHabit == null)
+        {
+            throw new Exception("Habit not found");
+        }
+        
+        findHabit.IsComplete = true;
+        findHabit.LastUpdate = DateTime.UtcNow;
+        
+        await _habitRepository.UpdateAsync(findHabit);
+        await _uof.SaveChangesAsync();
+        
+        return _mapper.Map<HabitResponseDTO>(findHabit);
+    }
 }

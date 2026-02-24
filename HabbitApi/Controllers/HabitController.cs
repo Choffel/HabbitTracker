@@ -54,5 +54,12 @@ public class HabitController : ControllerBase
         
         return NoContent();
     }
+
+    [HttpPatch("Complete/{id}")]
+    public async Task<IActionResult> CompleteHabit([FromRoute] Guid id)
+    {
+        var habit = await _habitService.CompleteHabitAsync(id);
         
+        return Ok(habit);
+    }
 }

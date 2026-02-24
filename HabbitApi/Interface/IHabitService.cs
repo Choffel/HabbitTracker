@@ -14,4 +14,6 @@ public interface IHabitService
     Task UpdateHabitAsync(Guid habitId, UpdateHabitRequest request);
     
     Task DeleteHabitAsync(Guid habitId);
+    
+    Task<HabitResponseDTO> CompleteHabitAsync(Guid habitId);
 }
