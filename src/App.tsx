@@ -1,6 +1,6 @@
 ﻿import { useCallback, useEffect, useState } from 'react';
 import { habitApi, categoryApi } from './api';
-import type {HabitResponseDTO, CategoryDTO} from './types';
+import type { HabitResponseDTO, CategoryDTO } from './types';
 
 function App() {
     const [habits, setHabits] = useState<HabitResponseDTO[]>([]);
@@ -8,7 +8,6 @@ function App() {
     const [habitName, setHabitName] = useState('');
     const [catId, setCatId] = useState('');
     const [newCatName, setNewCatName] = useState('');
-
     const [loading, setLoading] = useState(false);
     const [actionLoading, setActionLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -83,54 +82,118 @@ function App() {
         } finally { setActionLoading(false); }
     }, [fetchData]);
 
+    const completedCount = habits.filter(h => h.isCompleted).length;
+
     return (
         <div className="app-container">
+
+            {/* ── Header ── */}
             <div className="header">
-                <h1 className="title">Habit Tracker</h1>
-            </div>
-
-            <div className="card" style={{ marginBottom: 12 }}>
-                <div className="row">
-                    <input className="input" value={newCatName} onChange={e => setNewCatName(e.target.value)} placeholder="New Category" />
-                    <button className="btn" onClick={addCategory} disabled={actionLoading || !newCatName}>Add Category</button>
+                <div className="header-icon">🎯</div>
+                <div>
+                    <h1 className="title">Habit Tracker</h1>
+                    <p className="subtitle">
+                        {habits.length > 0
+                            ? `${completedCount} / ${habits.length} выполнено сегодня`
+                            : 'Начни отслеживать привычки'}
+                    </p>
                 </div>
             </div>
 
-            <div className="card" style={{ marginBottom: 12 }}>
+            {/* ── Add Category ── */}
+            <p className="section-label">Новая категория</p>
+            <div className="card" style={{ marginBottom: 20 }}>
                 <div className="row">
-                    <input className="input" value={habitName} onChange={e => setHabitName(e.target.value)} placeholder="Habit Name" />
+                    <input
+                        className="input"
+                        value={newCatName}
+                        onChange={e => setNewCatName(e.target.value)}
+                        onKeyDown={e => e.key === 'Enter' && addCategory()}
+                        placeholder="Название категории…"
+                    />
+                    <button className="btn" onClick={addCategory} disabled={actionLoading || !newCatName}>
+                        + Добавить
+                    </button>
+                </div>
+            </div>
+
+            {/* ── Add Habit ── */}
+            <p className="section-label">Новая привычка</p>
+            <div className="card" style={{ marginBottom: 28 }}>
+                <div className="row">
+                    <input
+                        className="input"
+                        value={habitName}
+                        onChange={e => setHabitName(e.target.value)}
+                        onKeyDown={e => e.key === 'Enter' && addHabit()}
+                        placeholder="Название привычки…"
+                    />
                     <select className="select" value={catId} onChange={e => setCatId(e.target.value)}>
-                        <option value="">Category...</option>
-                        {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                        <option value="">Категория…</option>
+                        {categories.map(c => (
+                            <option key={c.id} value={c.id}>{c.name}</option>
+                        ))}
                     </select>
-                    <button className="btn" onClick={addHabit} disabled={actionLoading || !habitName || !catId}>Add Habit</button>
+                    <button className="btn" onClick={addHabit} disabled={actionLoading || !habitName || !catId}>
+                        + Добавить
+                    </button>
                 </div>
             </div>
 
+            <div className="divider" />
+
+            {/* ── Habit list ── */}
             {loading ? (
-                <div className="center card small-muted">Loading...</div>
+                <div className="state-box">
+                    <div className="spinner" />
+                    <p className="state-desc">Загрузка…</p>
+                </div>
             ) : error ? (
-                <div className="card small-muted">{error}</div>
+                <div className="state-box error">
+                    <span className="state-icon">⚠️</span>
+                    <p className="state-title">Что-то пошло не так</p>
+                    <p className="state-desc">{error}</p>
+                    <button className="btn" style={{ marginTop: 8 }} onClick={fetchData}>
+                        Повторить
+                    </button>
+                </div>
+            ) : habits.length === 0 ? (
+                <div className="state-box">
+                    <span className="state-icon">✨</span>
+                    <p className="state-title">Привычек пока нет</p>
+                    <p className="state-desc">Добавь первую привычку выше, чтобы начать</p>
+                </div>
             ) : (
                 <div className="habit-list">
                     {habits.map(h => (
-                        <div key={h.id} className="card habit-item">
+                        <div key={h.id} className={`habit-item ${h.isCompleted ? 'completed-item' : ''}`}>
                             <div className="habit-meta">
-                                <input type="checkbox" checked={h.isCompleted} onChange={() => toggleComplete(h.id)} disabled={actionLoading} />
-                                <div>
-                                    <div className={`habit-name ${h.isCompleted ? 'completed' : ''}`}>{h.name}</div>
-                                    <div className="small-muted">{h.category}</div>
+                                <input
+                                    type="checkbox"
+                                    checked={h.isCompleted}
+                                    onChange={() => toggleComplete(h.id)}
+                                    disabled={actionLoading}
+                                />
+                                <div className="habit-text">
+                                    <div className={`habit-name ${h.isCompleted ? 'completed' : ''}`}>
+                                        {h.name}
+                                    </div>
+                                    <div className="habit-category">{h.category}</div>
                                 </div>
                             </div>
-                            <div>
-                                <button className="icon-btn danger" onClick={() => removeHabit(h.id)} disabled={actionLoading}>Delete</button>
-                            </div>
+                            <button
+                                className="icon-btn danger"
+                                onClick={() => removeHabit(h.id)}
+                                disabled={actionLoading}
+                            >
+                                Удалить
+                            </button>
                         </div>
                     ))}
                 </div>
             )}
 
-            <div className="footer-note small-muted">Tip: use categories to group habits.</div>
+            <p className="footer-note">Habit Tracker © {new Date().getFullYear()}</p>
         </div>
     );
 }
