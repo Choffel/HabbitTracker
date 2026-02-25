@@ -66,41 +66,43 @@ public class HabitService : IHabitService
         return _mapper.Map<HabitResponseDTO>(findHabit);
     }
 
-    public async Task UpdateHabitAsync(Guid habitId, UpdateHabitRequest request)
-    {
-        //get habit 
-        var findHabit = await _habitRepository.GetByIdAsync(habitId);
+        public async Task UpdateHabitAsync(Guid habitId, UpdateHabitRequest request)
+        {
+            //get habit 
+            var findHabit = await _habitRepository.GetByIdAsync(habitId);
+            
+            if (findHabit == null)
+            {
+                throw new Exception("Habit not found");
+            }
+            
+            var category = await _categoryRepository.GetByIdAsync(request.CategoryId);
+            
+            if (category == null)
+                throw new Exception("Category not found");
+
+            
+            findHabit.CategoryId = request.CategoryId;
+            findHabit.Name = request.Name;
+            findHabit.Category = category;
+            findHabit.LastUpdate = DateTime.UtcNow;
         
+            //  await _habitRepository.UpdateAsync(findHabit);
+            await _uof.SaveChangesAsync();
+        }
+
+    public  async Task DeleteHabitAsync(Guid habitId)
+    {
+        var findHabit =  await _habitRepository.GetByIdAsync(habitId);
+    
         if (findHabit == null)
         {
             throw new Exception("Habit not found");
         }
-        
-        var category = await _categoryRepository.GetByIdAsync(request.CategoryId);
-        
-        if (category == null)
-            throw new Exception("Category not found");
-
-
-        findHabit.Id = request.CategoryId;
-        findHabit.Name = request.Name;
-        findHabit.Category = category;
-        findHabit.LastUpdate = DateTime.UtcNow;
     
-        await _habitRepository.UpdateAsync(findHabit);
+        await _habitRepository.DeleteAsync(habitId);
+        
         await _uof.SaveChangesAsync();
-    }
-
-    public Task DeleteHabitAsync(Guid habitId)
-    {
-        var findHabit = _habitRepository.GetByIdAsync(habitId);
-    
-        if (findHabit == null)
-        {
-            throw new Exception("Habit not found");
-        }
-    
-        return _habitRepository.DeleteAsync(habitId);
     }
     
     public async Task<HabitResponseDTO> CompleteHabitAsync(Guid habitId)
