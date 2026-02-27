@@ -1,4 +1,6 @@
-﻿namespace HabbitApi.Model;
+﻿using HabbitApi.DTOs;
+
+namespace HabbitApi.Model;
 
 public class Habit
 {
@@ -15,5 +17,7 @@ public class Habit
     public DateTime CreatedOn { get; set; }
     
     public DateTime LastUpdate { get; set; }
+    
+    public ICollection<HabitLog> Logs { get; set; }
     
 }
